@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import API from "../utils/api";
 import CharacterCard from "../components/characterCard";
+import SearchHeader from "../components/searchHeader";
 
 // create a component
 class Home extends Component {
@@ -22,6 +23,10 @@ class Home extends Component {
   }
 
   componentDidMount() {
+    this.getAllCharacters();
+  }
+
+  getAllCharacters = () => {
     API.getCharacters()
       .then(response => {
         this.setState({ loading: false, characters: response.data.results });
@@ -29,7 +34,26 @@ class Home extends Component {
       .catch(err => {
         this.setState({ loading: false, error: err });
       });
-  }
+  };
+
+  handleSearchSubmit = text => {
+    API.getCharacters({ nameStartsWith: text })
+      .then(response => {
+        this.setState({ loading: false, characters: response.data.results });
+      })
+      .catch(err => {
+        this.setState({ loading: false, error: err });
+      });
+  };
+
+  renderHeader = () => {
+    return (
+      <SearchHeader
+        onSubmit={this.handleSearchSubmit}
+        cancelSearch={() => this.getAllCharacters()}
+      />
+    );
+  };
 
   renderCharacters = () => {
     return (
@@ -37,6 +61,7 @@ class Home extends Component {
         data={this.state.characters}
         renderItem={({ item }) => <CharacterCard character={item} />}
         keyExtractor={item => item.id}
+        ListHeaderComponent={this.renderHeader}
       />
     );
   };
