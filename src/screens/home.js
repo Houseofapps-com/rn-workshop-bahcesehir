@@ -1,65 +1,64 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
- */
-
-import React, { Component } from 'react';
+//import liraries
+import React, { Component } from "react";
 import {
-  Platform,
-  StyleSheet,
+  View,
   Text,
-  View
-} from 'react-native';
+  StyleSheet,
+  ActivityIndicator,
+  FlatList
+} from "react-native";
+import API from "../utils/api";
+import CharacterCard from "../components/characterCard";
 
-import API from '../utils/api';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-export default class Home extends Component<{}> {
-  componentDidMount() {
-    API.getCharacters().then((data) => {
-      console.log(data);
-    });
+// create a component
+class Home extends Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: true,
+      error: null,
+      characters: []
+    };
   }
+
+  componentDidMount() {
+    API.getCharacters()
+      .then(response => {
+        this.setState({ loading: false, characters: response.data.results });
+      })
+      .catch(err => {
+        this.setState({ loading: false, error: err });
+      });
+  }
+
+  renderCharacters = () => {
+    return (
+      <FlatList
+        data={this.state.characters}
+        renderItem={({ item }) => <CharacterCard character={item} />}
+        keyExtractor={item => item.id}
+      />
+    );
+  };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        {this.state.loading ? <ActivityIndicator /> : this.renderCharacters()}
       </View>
     );
   }
 }
 
+// define your styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FfFfFf"
+  }
 });
+
+//make this component available to the app
+export default Home;
