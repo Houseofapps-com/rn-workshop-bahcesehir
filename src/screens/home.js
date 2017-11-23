@@ -12,6 +12,8 @@ import {
   View
 } from 'react-native';
 
+import API from '../utils/api';
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -20,6 +22,12 @@ const instructions = Platform.select({
 });
 
 export default class Home extends Component<{}> {
+  componentDidMount() {
+    API.getCharacters().then((data) => {
+      console.log(data);
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
