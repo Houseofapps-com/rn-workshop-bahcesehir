@@ -1,4 +1,4 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
+import Root from './src/root';
 
-AppRegistry.registerComponent('MarvelWiki', () => App);
+AppRegistry.registerComponent('MarvelWiki', () => Root);
