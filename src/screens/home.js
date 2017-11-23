@@ -26,8 +26,13 @@ class Home extends Component {
     this.getAllCharacters();
   }
 
+  handleToDetailPage=(character)=>{
+    const { navigation } = this.props;
+    navigation.navigate('DetailScreen', {character:character})  
+  }
+
   getAllCharacters = () => {
-    API.getCharacters()
+    API.getCharacters({ orderBy:'-modified' } )
       .then(response => {
         this.setState({ loading: false, characters: response.data.results });
       })
@@ -59,7 +64,7 @@ class Home extends Component {
     return (
       <FlatList
         data={this.state.characters}
-        renderItem={({ item }) => <CharacterCard character={item} />}
+        renderItem={({ item }) => <CharacterCard character={item} goToDetail={this.handleToDetailPage} />}
         keyExtractor={item => item.id}
         ListHeaderComponent={this.renderHeader}
       />

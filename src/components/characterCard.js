@@ -1,12 +1,11 @@
 import React from "react";
-import { View, Text, Dimensions, StyleSheet, Image } from "react-native";
+import { View, Text, Dimensions, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
 const CharacterCard = props => {
-  console.log(props.character);
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={ ()=>props.goToDetail(props.character) } >
       <Image
         style={styles.image}
         source={{
@@ -14,7 +13,7 @@ const CharacterCard = props => {
         }}
       />
       <Text style={styles.text} >{props.character.name} </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
