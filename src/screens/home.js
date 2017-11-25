@@ -7,18 +7,22 @@ import {
   ActivityIndicator,
   FlatList
 } from "react-native";
+
+import { observer } from 'mobx-react/native';
+
 import API from "../utils/api";
 import CharacterCard from "../components/characterCard";
 import SearchHeader from "../components/searchHeader";
+import ComicsStore from "../stores/comicsStore";
 
 // create a component
+@observer
 class Home extends Component {
   constructor() {
     super();
     this.state = {
       loading: true,
       error: null,
-      characters: []
     };
   }
 
@@ -34,7 +38,8 @@ class Home extends Component {
   getAllCharacters = () => {
     API.getCharacters({ orderBy:'-modified' } )
       .then(response => {
-        this.setState({ loading: false, characters: response.data.results });
+        this.setState({ loading: false });
+        ComicsStore.setCharacters(response.data.results);
       })
       .catch(err => {
         this.setState({ loading: false, error: err });
@@ -44,7 +49,8 @@ class Home extends Component {
   handleSearchSubmit = text => {
     API.getCharacters({ nameStartsWith: text })
       .then(response => {
-        this.setState({ loading: false, characters: response.data.results });
+        this.setState({ loading: false });
+        ComicsStore.setCharacters(response.data.results);
       })
       .catch(err => {
         this.setState({ loading: false, error: err });
@@ -63,7 +69,7 @@ class Home extends Component {
   renderCharacters = () => {
     return (
       <FlatList
-        data={this.state.characters}
+        data={ComicsStore.characters.slice()}
         renderItem={({ item }) => <CharacterCard character={item} goToDetail={this.handleToDetailPage} />}
         keyExtractor={item => item.id}
         ListHeaderComponent={this.renderHeader}
